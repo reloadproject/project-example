@@ -1,4 +1,4 @@
-##  sharding-sphere 工程示例
+##  project-example 工程示例
 
 ---
 

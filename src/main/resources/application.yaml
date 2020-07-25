@@ -1,10 +1,6 @@
 spring:
   application:
-    name: elasticsearch-example
-  elasticsearch:
-    rest:
-      uris: 127.0.0.1:9200
-      read-timeout: 3s
+    name: project-example
 
 logging:
   level:
