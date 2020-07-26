@@ -10,6 +10,9 @@ import java.util.concurrent.DelayQueue;
 import java.util.concurrent.Delayed;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * DelayQueue 方式来实现延迟任务
+ */
 public class DelayQueueTest {
     public static void main(String[] args) {
         DelayQueue<DelayTask> dq = new DelayQueue<DelayTask>();
@@ -38,12 +41,11 @@ class ProducerDelay implements Runnable {
             delayQueue.add(new DelayTask(delaySecond, i + ""));
             System.out.println(sdf.format(new Date()) + " Thread " + Thread.currentThread() + " 添加了一个延迟任务，id=" + i);
             try {
-                Thread.sleep(500);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-
     }
 }
 
@@ -77,7 +79,6 @@ class ConsumerDelay implements Runnable {
         }
     }
 }
-
 
 @Data
 @AllArgsConstructor
