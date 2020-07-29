@@ -30,10 +30,10 @@ public class CacheServiceTest {
         //清理数据
         cacheService.delKey(keyPrefix);
 
-        // 模拟插入10条记录
+        // 模拟插入10条超时记录
         for (int i = 1; i <= 10; i++) {
             long delayTime = Instant.now().plusSeconds(i + 4).getEpochSecond();
-            boolean result = cacheService.addData(keyPrefix, "v=" + i, delayTime);
+            boolean result = cacheService.addData(keyPrefix, "v" + i, delayTime);
             if (result) {
                 System.out.println("记录：" + i + " 插入成功！");
             }
@@ -43,13 +43,16 @@ public class CacheServiceTest {
         while (true) {
             long nowtTime = Instant.now().getEpochSecond();
             // 一次扫描出小于当前时间且按时间排序的最小两条记录
-            List<String> result = cacheService.scanData(keyPrefix, nowtTime, 2);
+            List<String> result = cacheService.scanData(keyPrefix, nowtTime, 3);
             if (result != null) {
                 for (String record : result) {
-                    //redis单线程机制解决并发场景安全问题
-                    cacheService.removeData(keyPrefix, record);
-                    System.out.println("扫描出来的超时记录：" + JSON.toJSONString(result));
-
+                    // 对ZREM的返回值进行判断，只有大于0的时候，才消费数据
+                    // 防止多个线程消费同一个资源的情况
+                    long affectRow = cacheService.removeData(keyPrefix, record);
+                    if (affectRow > 0) {
+                        // 模拟业务处理
+                        System.out.println("处理超时记录：" + record);
+                    }
                 }
             }
             Thread.sleep(800);
